@@ -1,14 +1,13 @@
 package com.food.ordering.system.order.service.dataaccess.order.mapper;
 
-import com.food.ordering.system.domain.valueobject.CustomerId;
-import com.food.ordering.system.domain.valueobject.Money;
-import com.food.ordering.system.domain.valueobject.OrderId;
-import com.food.ordering.system.domain.valueobject.RestaurantId;
+import com.food.ordering.system.domain.valueobject.*;
 import com.food.ordering.system.order.service.dataaccess.order.entity.OrderAddressEntity;
 import com.food.ordering.system.order.service.dataaccess.order.entity.OrderEntity;
 import com.food.ordering.system.order.service.dataaccess.order.entity.OrderItemEntity;
 import com.food.ordering.system.order.service.domain.entity.Order;
 import com.food.ordering.system.order.service.domain.entity.OrderItem;
+import com.food.ordering.system.order.service.domain.entity.Product;
+import com.food.ordering.system.order.service.domain.valueobject.OrderItemId;
 import com.food.ordering.system.order.service.domain.valueobject.StreetAddress;
 import com.food.ordering.system.order.service.domain.valueobject.TrackingId;
 import org.springframework.stereotype.Component;
@@ -61,11 +60,21 @@ public class OrderDataAccessMapper {
     }
 
     private List<OrderItem> orderItemEntitiesToOrderItems(List<OrderItemEntity> items) {
-        return null;
+        return items.stream()
+                .map(orderItemEntity -> OrderItem.builder()
+                        .orderItemId(new OrderItemId(orderItemEntity.getId()))
+                        .product(new Product(new ProductId(orderItemEntity.getProductId())))
+                        .price(new Money(orderItemEntity.getPrice()))
+                        .quantity(orderItemEntity.getQuantity())
+                        .subTotal(new Money(orderItemEntity.getSubTotal()))
+                        .build()).collect(Collectors.toList());
     }
 
     private StreetAddress addressEntityToDeliveryAddress(OrderAddressEntity address) {
-        return null;
+        return new StreetAddress(address.getId(),
+                address.getStreet(),
+                address.getPostalCode(),
+                address.getCity());
     }
 
 
